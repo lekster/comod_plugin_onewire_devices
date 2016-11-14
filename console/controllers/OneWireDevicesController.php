@@ -13,7 +13,6 @@ use common\models\PValues;
 use yii\helpers\Console;
 use common\models\ProjectModules;
 
-require_once(dirname(__FILE__) . '/../../../bootstrap.php');
 chdir(GIRAR_BASE_DIR);
 
 date_default_timezone_set('Europe/Moscow');
@@ -27,7 +26,7 @@ class OneWireDevicesController extends Controller
 
 	public function actionInstall()
 	{
-
+		echo "test";
 	}
 
 	public function actionRelease($backupId)

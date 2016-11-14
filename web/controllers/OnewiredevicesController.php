@@ -19,7 +19,6 @@ use common\models\Device;
 use common\models\DeviceType;
 
 
-require_once(dirname(__FILE__) . '/../../../bootstrap.php');
 chdir(GIRAR_BASE_DIR);
 
 
