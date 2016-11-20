@@ -5,6 +5,7 @@
     "version":"0.0.5",
     "keywords": ["comod", "plugin"],
     "homepage": "http://twig.sensiolabs.org",
+    "upgradelink": "http://twig.sensiolabs.org",
     "license": "BSD-3-Clause",
     "authors": [
         {
