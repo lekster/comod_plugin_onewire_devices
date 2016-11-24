@@ -44,5 +44,20 @@
         "branch-alias": {
             "dev-master": "1.22-dev"
         }
-    }
+    },
+    "properties": [
+        {
+            "name": "FabienPotencier",
+            "val": "fabien@symfony.com111",
+            "type": "string",
+            "options": "123"
+        },
+        {
+            "name": "FabienPotencier2",
+            "val": "fabien@symfony.com",
+            "description": "fabien@symfony.com",
+            "type": "select",
+            "options":{"values":["ru","en"]}
+        }
+    ]
 }
