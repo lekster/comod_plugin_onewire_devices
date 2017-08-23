@@ -1,6 +1,9 @@
 <?php
 
-require_once (PROJ_DIR . "/htdocs/console/controllers/AbstractDevice.php");
+use console\controllers\AbstractDevice;
+
+require_once (__DIR__ . "/../../src/ownet.php");
+//!!! sudo apt-get install php-bcmath
 
 class onewiredev_DS18B20 extends AbstractDevice
 {
@@ -10,9 +13,20 @@ class onewiredev_DS18B20 extends AbstractDevice
 
 	protected function findAll1wireDevAddr()
 	{
-		$str = "find {$this->MNT_DIR} -maxdepth 1  -type d  | grep -E '[0-9A-F]{2}\.'";
+		$ow=new OWNet("tcp://localhost:4304");
+		$data = $ow->dir("/");
+		$devs =  array_map(function ($x) { return str_replace("/", "", $x) ;}, explode(",", $data['data']));
+		$devs = array_filter($devs, function ($x) { return preg_match("/^[0-9A-F]{2}\./i", $x); });
+
+		//$my_value = $ow->get("28.D6C18D020000/temperature");
+		$ret = $devs;
+
+
+		/*$str = "find {$this->MNT_DIR} -maxdepth 1  -type d  | grep -E '[0-9A-F]{2}\.'";
+		var_dump($str);
 		$ret = [];
 		exec($str, $ret);
+		*/
 		return $ret;
 	} 
 
@@ -22,10 +36,13 @@ class onewiredev_DS18B20 extends AbstractDevice
 		$paths = $this->findAll1wireDevAddr();
 		foreach ($paths as $path)
 		{
-			$addr = substr($path, strrpos($path, "/") + 1);
-			$type = exec("cat {$this->MNT_DIR}/$addr/type");
+			$addr = $path;
+			//$addr = substr($path, strrpos($path, "/") + 1);
+			$ow=new OWNet("tcp://localhost:4304");
+			$type = $ow->get("$addr/type");
+			//$type = exec("cat {$this->MNT_DIR}/$addr/type");
 			if (in_array($type, $this->TYPES))
-				$ret[] = $addr;
+				$ret[] = new onewiredev_DS18B20 ($addr);
 		}
 		return $ret;
 	}
@@ -44,8 +61,11 @@ class onewiredev_DS18B20 extends AbstractDevice
 
 	protected function getPortValTempl($port)
 	{
-		$str = "cat {$this->MNT_DIR}/{$this->_addr}/$port";
-		return exec($str);
+		//$str = "cat {$this->MNT_DIR}/{$this->_addr}/$port";
+		//return exec($str);
+		$ow=new OWNet("tcp://localhost:4304");
+		return $ow->get("{$this->_addr}/$port");
+
 	}
 	
 	public function ping()
@@ -55,4 +75,15 @@ class onewiredev_DS18B20 extends AbstractDevice
 
 	public function getVersion() {return "0.0.1"; }
 
+	public function getMacAddress()
+	{
+		return $this->_addr;
+	}
+
+	public function getOptions()
+	{
+		
+	}
+
+	public function setOptions(array $opt) {}
 }
