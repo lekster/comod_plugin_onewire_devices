@@ -33,17 +33,22 @@ class onewiredev_DS18B20 extends AbstractDevice
 	public function discovery()
 	{
 		$ret = [];
-		$paths = $this->findAll1wireDevAddr();
-		foreach ($paths as $path)
-		{
-			$addr = $path;
-			//$addr = substr($path, strrpos($path, "/") + 1);
-			$ow=new OWNet("tcp://localhost:4304");
-			$type = $ow->get("$addr/type");
-			//$type = exec("cat {$this->MNT_DIR}/$addr/type");
-			if (in_array($type, $this->TYPES))
-				$ret[] = new onewiredev_DS18B20 ($addr);
+		try {
+			$paths = $this->findAll1wireDevAddr();
+			foreach ($paths as $path)
+			{
+				$addr = $path;
+				//$addr = substr($path, strrpos($path, "/") + 1);
+				$ow=new OWNet("tcp://localhost:4304");
+				$type = $ow->get("$addr/type");
+				//$type = exec("cat {$this->MNT_DIR}/$addr/type");
+				if (in_array($type, $this->TYPES))
+					$ret[] = new onewiredev_DS18B20 ($addr);
+			}	
+		} catch (Exception $e) {
+			Yii::error("Exception|" . $e->getMessage());
 		}
+		
 		return $ret;
 	}
 	
@@ -63,9 +68,14 @@ class onewiredev_DS18B20 extends AbstractDevice
 	{
 		//$str = "cat {$this->MNT_DIR}/{$this->_addr}/$port";
 		//return exec($str);
-		$ow=new OWNet("tcp://localhost:4304");
-		return $ow->get("{$this->_addr}/$port");
-
+		try {
+			$ow=new OWNet("tcp://localhost:4304");
+			return $ow->get("{$this->_addr}/$port");
+		} catch (Exception $e) {
+			Yii::error("Exception|" . $e->getMessage());		
+			return null;
+		}
+		
 	}
 	
 	public function ping()
