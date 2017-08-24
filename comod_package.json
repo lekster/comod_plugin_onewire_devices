@@ -47,10 +47,14 @@
     },
     "properties": [
         {
-            "name": "FabienPotencier",
-            "val": "fabien@symfony.com111",
-            "type": "string",
-            "options": "123"
+            "name": "owserver_host",
+            "val": "localhost",
+            "type": "string"
+        },
+         {
+            "name": "owserver_port",
+            "val": "4304",
+            "type": "string"
         },
         {
             "name": "FabienPotencier2",
