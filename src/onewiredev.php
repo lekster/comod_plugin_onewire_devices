@@ -55,7 +55,8 @@ abstract class OneWireDevice extends AbstractDevice
 				$ow=new OWNet(self::$owserver_conn_str);
 				$type = $ow->get("$addr/type");
 				//$type = exec("cat /mnt/1wire/$addr/type");
-				$ret[] = new self::$class_types[$type] ($addr);
+				if (isset(self::$class_types[$type]))
+					$ret[] = new self::$class_types[$type] ($addr);
 			}	
 		} catch (Exception $e) {
 			Yii::error("Exception|" . $e->getMessage());
