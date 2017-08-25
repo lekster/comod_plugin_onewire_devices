@@ -16,6 +16,9 @@ abstract class OneWireDevice extends AbstractDevice
 
 	public static function discovery()
 	{
+		$owserver_host = SysHelper::getPluginSetting('onewiredevices', "owserver_host");
+		$owserver_port = SysHelper::getPluginSetting('onewiredevices', "owserver_port");
+		self::$owserver_conn_str = "tcp://$owserver_host:$owserver_port";
 
 		$files = SysHelper::glob_recursive(__DIR__ . "/../device/*.php");
 
@@ -29,7 +32,7 @@ abstract class OneWireDevice extends AbstractDevice
 				$className = str_replace(".php", "",  substr($fileName, strripos("$fileName", "/") + 1));
 				//$a = new $className;
 				//if ($a instanceof \AbstractDevice)
-				$rcl = @new \ReflectionClass($className);
+				$rcl = new \ReflectionClass($className);
 				if (!$rcl->isAbstract() && $rcl->isSubclassOf("console\controllers\AbstractDevice"))
 				{
 					foreach ($rcl->getConstant("TYPES") as $type )
