@@ -20,9 +20,11 @@ abstract class OneWireDevice extends AbstractDevice
 		$owserver_port = SysHelper::getPluginSetting('onewiredevices', "owserver_port");
 		self::$owserver_conn_str = "tcp://$owserver_host:$owserver_port";
 
-		$files = SysHelper::glob_recursive(__DIR__ . "/../device/*.php");
+		
 
 		//get classes for types
+		/*
+		$files = SysHelper::glob_recursive(__DIR__ . "/../device/*.php");
 		foreach ($files as $fileName)
 		{
 			$classes = get_declared_classes();
@@ -42,7 +44,35 @@ abstract class OneWireDevice extends AbstractDevice
 				}
 				
 			}
+		}*/
+
+		//new version
+		$files = SysHelper::glob_recursive(__DIR__ . "/../device/*.php");
+		foreach ($files as $fileName)
+		{
+			require_once $fileName;
+			//var_dump($fileName);
 		}
+
+		/*$dc = get_declared_classes();
+        $classNameLower = strtolower(get_class());
+        //var_export($dc);
+        $bc = array_values(array_filter($dc, function ($x) use($classNameLower) { return preg_match("|.*OneWireDevice.*|i", $x); } ));
+        //var_dump($bc);
+		*/
+
+        foreach (get_declared_classes() as $className)
+        {
+        	$rcl = new \ReflectionClass($className);
+			if (!$rcl->isAbstract() && $rcl->isSubclassOf("OneWireDevice"))
+			{
+				foreach ($rcl->getConstant("TYPES") as $type )
+				{
+					self::$class_types[$type] = $className;
+				}	
+			}
+        }
+
 
 		//find devices
 		$ret = [];
